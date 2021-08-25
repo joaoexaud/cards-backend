@@ -1,10 +1,21 @@
 const express = require("express");
 const app = express();
+const { body } = require("express-validator");
+const { validationResult } = require("express-validator");
 
 const { conn } = require("../db");
 
-app.post("/login", (req, res) => { 
-    console.log(req.body);
+app.post("/login", 
+body("email").notEmpty(),
+body("password").notEmpty(),
+function(req, res) {
+    if(req.headers["content-type"] !== "application/x-www-form-urlencoded") { 
+        res.send("Request with wrong content-type!");
+    }
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) { 
+        res.send(errors);
+    }
     const sql = "select * from User where email=?;";
     conn.query(sql, req.body.email, (err, result) => { 
         if(err) { 
