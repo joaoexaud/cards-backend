@@ -3,6 +3,7 @@ const app = express();
 const { body } = require("express-validator");
 const { validationResult } = require("express-validator");
 
+const { signup } = require("./authModel");
 const { conn } = require("../db");
 
 app.post("/login", 
@@ -29,5 +30,10 @@ function(req, res) {
         }
     })
 });
+
+app.post("/signup", 
+body("email").notEmpty(),
+body("password").notEmpty(),
+signup);
 
 module.exports = app;
